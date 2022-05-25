@@ -1,0 +1,6 @@
+*.xlsx
+*.Rproj
+.Rproj.user
+bin/
+clues/
+relate/
