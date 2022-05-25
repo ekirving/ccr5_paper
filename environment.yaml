@@ -1,19 +1,20 @@
 channels:
-  - bioconda
   - conda-forge
   - defaults
 dependencies:
-  - click=7.1.2
-  - matplotlib=3.3.2
-  - numba=0.51.2
-  - numpy=1.19.2
-  - python=3.8.6
-  - pyyaml=5.3.1
-  - r-base=3.6.3
-  - r-dplyr=1.0.2
-  - r-ggplot2=3.3.2
-  - r-rcppcnpy=0.2.10
-  - r-readr=1.4.0
-  - r-stringr=1.4.0
-  - r-tidyr=1.1.2
-  - scipy=1.5.2
+  - conda-forge::click=7.1.2
+  - conda-forge::matplotlib=3.3.2
+  - conda-forge::numba=0.51.2
+  - conda-forge::numpy=1.19.2
+  - conda-forge::python=3.8.6
+  - conda-forge::pyyaml=5.3.1
+  - conda-forge::r-base=3.6.3
+  - conda-forge::r-directlabels=2021.1.13
+  - conda-forge::r-dplyr=1.0.2
+  - conda-forge::r-ggplot2=3.3.2
+  - conda-forge::r-rcppcnpy=0.2.10
+  - conda-forge::r-readr=1.4.0
+  - conda-forge::r-stringr=1.4.0
+  - conda-forge::r-tidyr=1.1.2
+  - conda-forge::r-zoo=1.8_9
+  - conda-forge::scipy=1.5.2

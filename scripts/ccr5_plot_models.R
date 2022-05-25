@@ -1,0 +1,147 @@
+#!/usr/bin/env Rscript
+
+# Author:    Evan K. Irving-Pease
+# Copyright: Copyright 2022, University of Copenhagen
+# Email:     evan.irvingpease@gmail.com
+# License:   MIT
+
+quiet <- function(x) {
+    suppressMessages(suppressWarnings(x))
+}
+quiet(library(readr))
+quiet(library(dplyr))
+quiet(library(tidyr))
+quiet(library(tibble))
+quiet(library(stringr))
+quiet(library(ggplot2))
+quiet(library(RcppCNPy))
+quiet(library(directlabels))
+quiet(library(zoo))
+
+# the average generation time in years
+gen_time <- 28
+
+# frequency of the deletion in FIN, GBR and TSI
+modern_freq <- 0.1237
+
+models <- c("Predicted_by_model", "Artifacts_filter", "Minus_haplo_filter")
+epochs <- c("one-epoch")
+modes <- c("mod", "no_mod")
+
+# load the estimate allele ages
+ages <- read_tsv("clues/ccr5_mutation_ages.tsv") %>%
+    separate(col=model, into = c("model", "epochs", "_", "mode"), sep="-") %>%
+    filter(model %in% models & epochs=="one" & mode %in% modes)
+
+
+clues_trajectory <- function(model_path, smooth = 10) {
+
+    # load the model data
+    epochs <- npyLoad(paste0(model_path, ".epochs.npy"))
+    freqs <- npyLoad(paste0(model_path, ".freqs.npy"))
+    logpost <- npyLoad(paste0(model_path, ".post.npy"), dotranspose = F)
+
+    # add column names
+    colnames(logpost) <- paste0("V", seq(ncol(logpost)))
+
+    model <- as_tibble(logpost) %>%
+
+        # convert posterior densities from log-likelihoods
+        exp() %>%
+
+        # add the frequency labels
+        add_column(freq = freqs, .before = 2) %>%
+
+        # add the title heights (and a little padding to make sure there are no gaps)
+        # tile heights are not equal because there is higher sampling density near 0 and 1
+        add_column(height = diff(c(0, freqs)) + 1e-4, .before = 3) %>%
+
+        # pivot the columns into long format
+        pivot_longer(-c(freq, height), names_to = "epoch", values_to = "density") %>%
+
+        # convert the column names into epochs (and switch the direction of time)
+        mutate(epoch = -epochs[as.numeric(gsub("V", "", epoch))]) %>%
+
+        # sort by epoch age
+        arrange(epoch)
+
+    # extract the maximum posterior trajectory
+    traj <- model %>%
+        group_by(epoch) %>%
+        top_n(1, density) %>%
+        ungroup() %>%
+        arrange(epoch)
+
+    # apply a little smoothing to the jagged steps in the trajectory
+    if (smooth) {
+        traj$freq <- rollapply(c(traj$freq, rep_len(NA, smooth - 1)), width = smooth, by = 1, FUN = mean, na.rm = TRUE, align = "left")
+    }
+
+    traj
+}
+
+# load the trajectories
+traj <- bind_rows(
+    lapply(models, function(model) {
+        bind_rows(
+            lapply(epochs, function(epoch_type) {
+                lapply(modes, function(mode) {
+                    clues_trajectory(paste0("clues/", model, "/ccr5-", model, "-", epoch_type, "-", mode)) %>%
+                        mutate(model = model, epoch_type = epoch_type, mode = mode)
+                })
+            })
+        )
+    })
+)
+
+# constrain the extent of the plotting
+xmin <- min(traj$epoch)
+xmax <- max(traj$epoch)
+xbreaks <- -seq(-xmax, -xmin, round(2000 / gen_time))
+xlabels <- round(xbreaks * gen_time / 1000)
+
+# set the facor order and labels
+# traj$mode <- factor(traj$mode, levels=c("no_mod", "mod"))
+
+plt <- traj %>%
+
+    # plot the trajectories
+    ggplot(aes(x = epoch, y = freq, color = model)) +
+
+    # split by mod and no_mod
+    facet_grid(~mode, labeller=) +
+
+    # show the modern frequency
+    # geom_point(x=0, y=modern_freq, color="red", shape=21, cex=3) +
+
+    # plot the maximum posterior trajectory
+    geom_line() +
+
+    # show the allele ages
+    geom_point(aes(y=0), ages) +
+
+    # set the model colours
+    # scale_color_manual(values = snp_colors) +
+
+    # print the labels
+    geom_dl(aes(label = model), method = list(dl.trans(x = x + 0.1), "last.qp", cex = 0.8), na.rm = TRUE) +
+
+    # set the axis breaks
+    scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, .2), position = "left") +
+    scale_x_continuous(limits = c(xmin, xmax), breaks = xbreaks, labels = xlabels, expand = expansion(add = c(0, 400))) +
+
+    labs(title = "CCR5-delta 32") +
+    ylab("DAF") +
+    xlab("kyr BP") +
+
+    # basic styling
+    theme_minimal() +
+    theme(
+        legend.position = "none",
+        # panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        panel.background = element_blank()
+    )
+
+ggsave("clues/ccr5_delta32_trajectory.png", plt, width=10, height = 6)
