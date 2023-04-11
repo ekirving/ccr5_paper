@@ -17,6 +17,7 @@ quiet(library(ggplot2))
 quiet(library(RcppCNPy))
 quiet(library(directlabels))
 quiet(library(zoo))
+quiet(library(jsonlite))
 
 # the average generation time in years
 gen_time <- 28
@@ -29,7 +30,7 @@ epochs <- c("one-epoch")
 modes <- c("mod", "no_mod")
 
 # load the estimate allele ages
-ages <- read_tsv("clues/ccr5_mutation_ages.tsv") %>%
+ages <- read_tsv("clues/ccr5_mutation_ages.tsv", col_types = cols()) %>%
     separate(col=model, into = c("model", "epochs", "_", "mode"), sep="-") %>%
     filter(model %in% models & epochs=="one" & mode %in% modes)
 
@@ -86,8 +87,11 @@ traj <- bind_rows(
         bind_rows(
             lapply(epochs, function(epoch_type) {
                 lapply(modes, function(mode) {
-                    clues_trajectory(paste0("clues/", model, "/ccr5-", model, "-", epoch_type, "-", mode)) %>%
-                        mutate(model = model, epoch_type = epoch_type, mode = mode)
+                    prefix <- paste0("clues/", model, "/ccr5-", model, "-", epoch_type, "-", mode)
+                    data <- fromJSON(paste0(prefix, ".json"))
+                    pval <- formatC(pchisq(2 * data$logLR, df = 1, lower.tail = FALSE), format = "e", digits = 1)
+                    clues_trajectory(prefix) %>%
+                        mutate(model = model, label = paste0(model, " (p=", pval, ")"), epoch_type = epoch_type, mode = mode)
                 })
             })
         )
@@ -125,11 +129,11 @@ plt <- traj %>%
     # scale_color_manual(values = snp_colors) +
 
     # print the labels
-    geom_dl(aes(label = model), method = list(dl.trans(x = x + 0.1), "last.qp", cex = 0.8), na.rm = TRUE) +
+    geom_dl(aes(label = label), method = list(dl.trans(x = x + 0.1), "last.qp", cex = 0.6), na.rm = TRUE) +
 
     # set the axis breaks
     scale_y_continuous(limits = c(0, .25), breaks = seq(0, 1, .05), position = "left") +
-    scale_x_continuous(limits = c(xmin, xmax), breaks = xbreaks, labels = xlabels, expand = expansion(add = c(0, 400))) +
+    scale_x_continuous(limits = c(xmin, xmax), breaks = xbreaks, labels = xlabels, expand = expansion(add = c(0, 520))) +
 
     labs(title = "CCR5-delta 32") +
     ylab("DAF") +
@@ -145,4 +149,4 @@ plt <- traj %>%
         panel.background = element_blank()
     )
 
-ggsave("clues/ccr5_delta32_trajectory.png", plt, width=9, height=4)
+ggsave("figure/ccr5_delta32_trajectory.png", plt, width=9, height=4)
