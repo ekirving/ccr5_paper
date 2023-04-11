@@ -9,6 +9,7 @@ __email__ = "ajstern@berkeley.edu"
 
 import argparse
 import json
+import warnings
 from math import ceil
 
 import numpy as np
@@ -40,7 +41,7 @@ f, ax = plt.subplots(1, 1)
 f.set_size_inches(20, 10)
 
 xmin = int(min(epochs))
-xmax = min(int(max(epochs)), round(13665 / args.gen_time))  # TODO parameterize this
+xmax = min(int(max(epochs)), round(13665 / args.gen_time))
 
 xticks = range(xmin, xmax + 1, round(1000 / args.gen_time))
 
@@ -52,12 +53,16 @@ xlabels = [-int(tick * args.gen_time / 1000) for tick in xticks]
 data = []
 for epoch, s in params["epochs"].items():
     # convert the log-likelihood ratio into a p-value
-    params["p.value"] = chi2.sf(params["logLR"], 1)
+    # https://en.wikipedia.org/wiki/Wilks%27_theorem
+    params["p.value"] = chi2.sf(2 * params["logLR"], 1)
     data.append(
         "logLR = {:.2f} | p = {:.2e} | epoch = {} | s = {:.5f}".format(params["logLR"], params["p.value"], epoch, s)
     )
 
 subtitle = "\n" + "\n".join(data)
+
+# ignore MatplotlibDeprecation warnings
+warnings.filterwarnings("ignore")
 
 plt.pcolormesh(epochs[:-1], freqs, np.exp(logpost)[:, :])
 plt.suptitle(label["title"], x=0.6, fontsize=18)

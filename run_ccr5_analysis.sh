@@ -8,7 +8,7 @@
 # CCR5 analysis - 4th version - 2 selection epochs (14.8 kBP - 3 kBP - 0) - 2022-03-30
 
 # fetch the CLUES code
-[ ! -d "bin/clues/" ] && git clone git@github.com:35ajstern/clues.git bin/clues/
+[ ! -d "bin/clues/" ] && git clone https://github.com/standard-aaron/clues.git bin/clues/
 
 # the different models to run
 MODELS=( p_Data Predicted_by_model Artifacts_filter Minus_haplo_filter minus_haplotype )

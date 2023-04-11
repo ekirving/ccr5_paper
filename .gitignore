@@ -2,5 +2,5 @@
 *.Rproj
 .Rproj.user
 bin/
-clues/
+clues*/
 relate/
