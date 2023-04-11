@@ -100,8 +100,9 @@ xmax <- max(traj$epoch)
 xbreaks <- -seq(-xmax, -xmin, round(2000 / gen_time))
 xlabels <- round(xbreaks * gen_time / 1000)
 
-# set the facor order and labels
-# traj$mode <- factor(traj$mode, levels=c("no_mod", "mod"))
+# set the factor order and labels
+traj$mode <- factor(traj$mode, levels = c("mod", "no_mod"), labels = c("With modern ascertainment", "Without modern ascertainment"))
+ages$mode <- factor(ages$mode, levels = c("mod", "no_mod"), labels = c("With modern ascertainment", "Without modern ascertainment"))
 
 plt <- traj %>%
 
@@ -109,7 +110,7 @@ plt <- traj %>%
     ggplot(aes(x = epoch, y = freq, color = model)) +
 
     # split by mod and no_mod
-    facet_grid(~mode, labeller=) +
+    facet_grid(~mode) +
 
     # show the modern frequency
     # geom_point(x=0, y=modern_freq, color="red", shape=21, cex=3) +
@@ -127,7 +128,7 @@ plt <- traj %>%
     geom_dl(aes(label = model), method = list(dl.trans(x = x + 0.1), "last.qp", cex = 0.8), na.rm = TRUE) +
 
     # set the axis breaks
-    scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, .2), position = "left") +
+    scale_y_continuous(limits = c(0, .25), breaks = seq(0, 1, .05), position = "left") +
     scale_x_continuous(limits = c(xmin, xmax), breaks = xbreaks, labels = xlabels, expand = expansion(add = c(0, 400))) +
 
     labs(title = "CCR5-delta 32") +
@@ -144,4 +145,4 @@ plt <- traj %>%
         panel.background = element_blank()
     )
 
-ggsave("clues/ccr5_delta32_trajectory.png", plt, width=10, height = 6)
+ggsave("clues/ccr5_delta32_trajectory.png", plt, width=9, height=4)
