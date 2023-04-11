@@ -1,6 +1,7 @@
 *.Rproj
 *.pptx
 *.xlsx
+*old*
 .Rproj.user
 bin/
 clues*/
