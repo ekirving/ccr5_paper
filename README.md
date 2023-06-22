@@ -1,13 +1,14 @@
 # Allele frequency trajectory of the CCR5delta32 mutation
 This repository contains code for the `CLUES` selection analysis from 
-[The evolutionary history of the CCR5delta32 deletion as revealed by ancient and present-day genomes](https://).
+[Tracing the evolutionary path of the CCR5delta32 deletion via ancient and modern genomes](https://doi.org/10.1101/2023.06.15.23290026).
 
-![Figure 2](./figure/ccr5_delta32_trajectory.png?raw=true)
+![Figure 5](./figure/ccr5_delta32_trajectory.png?raw=true)
 
 If you reuse any of this code then please cite the preprint:
-> Kirstine Ravn&ast;, Leonardo Cobuccio&ast;, Rasa Audange Muktupavela&ast;, Jonas Meisner, Martin Sikora, Eske 
-> Willerslev, Morten Allentoft, Evan K. Irving-Pease, Fernando Racimo, Simon Rasmussen, 2022. The evolutionary history 
-> of the CCR5delta32 deletion as revealed by ancient and present-day genomes. *bioRxiv* XXX
+> Ravn, K., Cobuccio, L., Muktupavela, R.A., Meisner, J.M., Benros, M.E., Korneliussen, T.S., Sikora, M., Willerslev, 
+> E., Allentoft, M.E., Irving-Pease, E.K., Racimo, F., Rasmussen, S., 2023. Tracing the evolutionary path of the 
+> CCR5delta32 deletion via ancient and modern genomes. *medRxiv* https://doi.org/10.1101/2023.06.15.23290026
+
 
 ## Installation
 Download the code: 
