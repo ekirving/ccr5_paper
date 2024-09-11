@@ -1,7 +1,11 @@
+*-commands.sh
 *.Rproj
 *.pptx
+*.txt
 *.xlsx
+*.zip
 *old*
+*proxy*
 .Rproj.user
 bin/
 clues*/
