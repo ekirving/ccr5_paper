@@ -24,7 +24,6 @@ parser.add_argument("--gen-time", type=int, default="28")
 parser.add_argument("--params", type=str)
 parser.add_argument("--label", type=str)
 parser.add_argument("--ancestry", type=str)
-parser.add_argument("--sex", type=str)
 args = parser.parse_args()
 
 epochs = np.load("{}.epochs.npy".format(args.inputPrefix))

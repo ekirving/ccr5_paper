@@ -2,25 +2,24 @@
 # -*- coding: utf-8 -*-
 
 __author__ = "Evan K. Irving-Pease"
-__copyright__ = "Copyright 2020, University of Copenhagen"
+__copyright__ = "Copyright 2022, University of Copenhagen"
 __email__ = "evan.irvingpease@gmail.com"
 __license__ = "MIT"
 
 import json
 
 import click
-
-SEXES = ["XX", "XY", "any"]
+from scipy.stats.distributions import chi2
 
 
 @click.command()
 @click.option("--rsid", metavar="<string>", help="RefSeq ID", required=True)
-@click.option("--mode", metavar="<string>", help="Clues mode", required=True)
 @click.option("--ancestry", metavar="<string>", help="Ancestral path", required=True)
-@click.option("--sex", metavar="<string>", help="Sample sex", type=click.Choice(SEXES), required=True)
+@click.option("--use-freq", metavar="<string>", help="Was the modern frequency used", required=True)
+@click.option("--mod-freq", metavar="<string>", help="The modern population frequency", required=True)
 @click.option("--log", "log_file", metavar="<file>", type=click.Path(writable=True), help="Log file", required=True)
 @click.option("--out", "output", metavar="<file>", type=click.File("w"), help="Output filename", required=True)
-def clues_parse_log(rsid, mode, ancestry, sex, log_file, output):
+def clues_parse_log(rsid, ancestry, use_freq, mod_freq, log_file, output):
     """
     Parse the Clues log file to extract the information we want.
     """
@@ -39,12 +38,18 @@ def clues_parse_log(rsid, mode, ancestry, sex, log_file, output):
                     except ValueError:
                         break
 
+        # convert the log-likelihood ratio into a p-value
+        # https://en.wikipedia.org/wiki/Wilks%27_theorem
+        pval = chi2.sf(2 * float(lnl_ratio), 1)
+
         data = {
             "rsid": rsid,
-            "mode": mode,
+            "mode": "ancient",
             "ancestry": ancestry,
-            "sex": sex,
+            "use_freq": use_freq,
+            "mod_freq": mod_freq,
             "logLR": float(lnl_ratio),
+            "pval": pval,
             "epochs": epochs,
         }
 
