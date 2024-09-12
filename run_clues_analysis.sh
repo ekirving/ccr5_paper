@@ -11,7 +11,7 @@
 [ ! -d "bin/clues/" ] && git clone git@github.com:35ajstern/clues.git --branch aaron/palm-integration bin/clues/
 
 # CCR5 and the 7 controls
-DELETIONS=( rs333 rs61231801 rs66552573 rs67580019 rs143241023 rs150628438 rs369842709 rs556322139 )
+DELETIONS=( rs333 rs61231801 rs66552573 rs67580019 rs143241023 rs150628438 rs369842709 rs556322139 Le_proxy_SNP )
 
 # the different models to run
 MODELS=( No_filter Permissive_filter Strict_filter p_Data )
@@ -47,11 +47,17 @@ for rsid in "${DELETIONS[@]}"; do
         freq=0.1203
     elif [ "${rsid}" == "rs556322139" ]; then
         freq=0.1004
+    elif [ "${rsid}" == "Le_proxy_SNP" ]; then
+        freq=0.1362  # rs73833033
     else
         freq=-1
     fi
 
     for model in "${MODELS[@]}"; do
+
+        if [ "${rsid}" == "Le_proxy_SNP" ] && { [ "${model}" == "Permissive_filter" ] || [ "${model}" == "Strict_filter" ]; }; then
+            continue
+        fi
 
         for mode in "${MODES[@]}"; do
 
