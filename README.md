@@ -33,11 +33,16 @@ This project contains rules for running selection tests using `CLUES` from the o
 
 ```bash
 # run all the models  
-./run_ccr5_analysis.sh
+./run_clues_analysis.sh
 ```
 
 ```bash
-# plot the composite figure  
+# infer the ages of the mutations
+Rscript scripts/infer_mutation_ages.R
+```
+
+```bash
+# plot the composite figure 
 Rscript scripts/ccr5_plot_models.R
 ```
 

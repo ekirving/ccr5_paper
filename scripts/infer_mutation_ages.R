@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 
 # Author:    Evan K. Irving-Pease
-# Copyright: Copyright 2022, University of Copenhagen
+# Copyright: Copyright 2024, University of Copenhagen
 # Email:     evan.irvingpease@gmail.com
 # License:   MIT
 

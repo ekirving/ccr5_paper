@@ -63,18 +63,16 @@ for rsid in "${DELETIONS[@]}"; do
                 daf=""
             fi
 
-            (
-                set -x
-                python bin/clues/inference.py \
-                     --lik \
-                     ${daf} \
-                     --coal "relate/1000G_phase3-FIN_GBR_TSI-popsize.coal" \
-                     --ancientSamps "clues/${rsid}/${rsid}-${model}.ancient" \
-                     --timeBins "clues/one-epoch.bins" \
-                     --betaParam 0.5 \
-                     --out "clues/${rsid}/${rsid}-${model}-${mode}" \
+            # run CLUES
+            python bin/clues/inference.py \
+                 --lik \
+                 ${daf} \
+                 --coal "relate/1000G_phase3-FIN_GBR_TSI-popsize.coal" \
+                 --ancientSamps "clues/${rsid}/${rsid}-${model}.ancient" \
+                 --timeBins "clues/one-epoch.bins" \
+                 --betaParam 0.5 \
+                 --out "clues/${rsid}/${rsid}-${model}-${mode}" \
                      &> "clues/${rsid}/${rsid}-${model}-${mode}.log"
-            )
 
             # extract the results
             python scripts/clues_parse_log.py \
@@ -109,6 +107,3 @@ for rsid in "${DELETIONS[@]}"; do
         done;
     done;
 done;
-
-# extract the age of the mutation
-Rscript scripts/infer_mutation_ages.R
