@@ -134,6 +134,17 @@ ages <- ages %>%
         by = join_by(rsid, model, mode)
     )
 
+snp_colors <- c(
+    "rs333" = "#33a02c",
+    "rs61231801" = "#a6cee3",
+    "rs66552573" = "#1f78b4",
+    "rs67580019" = "#fb9a99",
+    "rs143241023" = "#e31a1c",
+    "rs150628438" = "#fdbf6f",
+    "rs369842709" = "#ff7f00",
+    "rs556322139" = "#cab2d6"
+)
+
 plt <- traj %>%
     # plot the trajectories
     ggplot(aes(x = epoch, y = freq, color = rsid, alpha = significant)) +
@@ -151,7 +162,7 @@ plt <- traj %>%
     facet_grid(model ~ mode, labeller = labeller(description = label_wrap_gen())) +
 
     # set the model colours
-    # scale_color_manual(values = snp_colors) +
+    scale_color_manual(values = snp_colors) +
 
     # plot non-significant trajectories as transparent
     scale_alpha(range = c(0.3, 1)) +

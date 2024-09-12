@@ -1,4 +1,4 @@
-# Allele frequency trajectory of the CCR5delta32 mutation
+# Allele frequency trajectory of the CCR5Δ32 deletion
 This repository contains code for the `CLUES` selection analysis from 
 [Tracing the evolutionary path of the CCR5delta32 deletion via ancient and modern genomes](https://doi.org/10.1101/2023.06.15.23290026).
 
