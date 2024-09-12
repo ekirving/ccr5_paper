@@ -8,12 +8,7 @@
 quiet <- function(x) {
     suppressMessages(suppressWarnings(x))
 }
-quiet(library(readr))
-quiet(library(dplyr))
-quiet(library(tidyr))
-quiet(library(tibble))
-quiet(library(stringr))
-quiet(library(ggplot2))
+quiet(library(tidyverse))
 quiet(library(RcppCNPy))
 
 # the lowest discretisations of frequency are:
@@ -50,18 +45,18 @@ clues_trajectory <- function(model_path) {
     model
 }
 
-models <- c("p_Data", "Predicted_by_model", "Artifacts_filter", "Minus_haplo_filter", "minus_haplotype")
-epochs <- c("one-epoch", "two-epochs")
-modes <- c("mod", "no_mod")
+deletions <- c("rs333", "rs61231801", "rs66552573", "rs67580019", "rs143241023", "rs150628438", "rs369842709", "rs556322139")
+models <- c("No_filter", "Permissive_filter", "Strict_filter", "p_Data")
+modes <- c("mod_freq", "no_freq")
 
 # load the trajectories
 traj <- bind_rows(
-    lapply(models, function(model) {
+    lapply(deletions, function(rsid) {
         bind_rows(
-            lapply(epochs, function(epoch_type) {
+            lapply(models, function(model) {
                 lapply(modes, function(mode) {
-                    clues_trajectory(paste0("clues/", model, "/ccr5-", model, "-", epoch_type, "-", mode)) %>%
-                        mutate(model = paste0(model, "-", epoch_type, "-", mode))
+                    clues_trajectory(paste0("clues/", rsid, "/", rsid, "-", model, "-", mode)) %>%
+                        mutate(rsid = rsid, model = model, mode = mode)
                 })
             })
         )
@@ -70,11 +65,11 @@ traj <- bind_rows(
 
 age <- traj %>%
     filter(freq <= MIN_FREQ) %>%
-    group_by(model, epoch) %>%
-    summarise(density = sum(density), freq = max(freq)) %>%
+    group_by(rsid, model, mode, epoch) %>%
+    summarise(density = sum(density), freq = max(freq), .groups = "drop_last") %>%
     filter(density >= 0.5) %>%
     slice(which.max(epoch)) %>%
     mutate(age_bp = -epoch * 28) %>%
-    select(model, freq, epoch, age_bp, density)
+    select(rsid, model, mode, freq, epoch, age_bp, density)
 
-write_tsv(age, "clues/ccr5_mutation_ages.tsv")
+write_tsv(age, "clues/mutation_ages.tsv")

@@ -47,6 +47,8 @@ for rsid in "${DELETIONS[@]}"; do
         freq=0.1203
     elif [ "${rsid}" == "rs556322139" ]; then
         freq=0.1004
+    else
+        freq=-1
     fi
 
     for model in "${MODELS[@]}"; do
@@ -105,10 +107,8 @@ for rsid in "${DELETIONS[@]}"; do
               "clues/${rsid}/${rsid}-${model}-${mode}" \
               "clues/${rsid}/${rsid}-${model}-${mode}" 2> /dev/null
         done;
-
-        exit
     done;
 done;
 
 # extract the age of the mutation
-Rscript scripts/ccr5_mutation_age.R
+Rscript scripts/infer_mutation_ages.R

@@ -12,7 +12,7 @@ quiet(library(tidyverse)) # v1.3.2
 
 # load the models calls for each control deletion
 data <- read_delim(fs::dir_ls(path = "data/results_8deletions_22_07_24/", glob = "*.tsv"), delim = "\t", id = "path", show_col_types = FALSE) %>%
-    mutate(rsid=str_replace(str_replace(path, "data/results_8deletions_22_07_24/", ""), "_E.tsv", "")) %>%
+    mutate(rsid = str_replace(str_replace(path, "data/results_8deletions_22_07_24/", ""), "_E.tsv", "")) %>%
     select(-path)
 
 # load the sample metadata
@@ -42,9 +42,9 @@ for (deletion in unique(data$rsid)) {
         # convert the hard-called models into pseudo-likelihoods
         locus %>%
             mutate(call = case_when(
-                get({{model}}) == "RR" ~ "0.000000 -inf -inf",
-                get({{model}}) == "RD" ~ "-inf 0.000000 -inf",
-                get({{model}}) == "DD" ~ "-inf -inf 0.000000"
+                get({{ model }}) == "RR" ~ "0.000000 -inf -inf",
+                get({{ model }}) == "RD" ~ "-inf 0.000000 -inf",
+                get({{ model }}) == "DD" ~ "-inf -inf 0.000000"
             )) %>%
             mutate(clues = sprintf("%.6f %s", gens, call)) %>%
             select(clues) %>%
