@@ -5,9 +5,8 @@
 *.xlsx
 *.zip
 *old*
-*proxy*
 .Rproj.user
 bin/
-clues*/
+clues/
 paper/
 relate/
