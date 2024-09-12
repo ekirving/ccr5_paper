@@ -1,7 +1,9 @@
 channels:
   - conda-forge
+  - bioconda
   - defaults
 dependencies:
+  - bioconda::bcftools=1.17
   - conda-forge::click=7.1.2
   - conda-forge::matplotlib=3.3.2
   - conda-forge::numba=0.51.2
