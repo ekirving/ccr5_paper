@@ -150,7 +150,7 @@ plt <- traj %>%
     ggplot(aes(x = epoch, y = freq, color = rsid, alpha = significant)) +
 
     # plot the maximum posterior trajectory
-    geom_line(cex = 1, na.rm = TRUE) +
+    geom_line(linewidth = 1, na.rm = TRUE) +
 
     # print the labels
     geom_dl(aes(label = snp_label), method = list(dl.trans(x = x + 0.1), "last.qp", cex = 0.7), na.rm = TRUE) +
