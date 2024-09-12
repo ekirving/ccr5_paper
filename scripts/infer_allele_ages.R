@@ -72,4 +72,4 @@ age <- traj %>%
     mutate(age_bp = -epoch * 28) %>%
     select(rsid, model, mode, freq, epoch, age_bp, density)
 
-write_tsv(age, "clues/mutation_ages.tsv")
+write_tsv(age, "clues/allele_ages.tsv")
