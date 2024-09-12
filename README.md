@@ -43,7 +43,7 @@ Rscript scripts/infer_allele_ages.R
 
 ```bash
 # plot the composite figure
-Rscript scripts/ccr5_plot_models.R
+Rscript scripts/plot_models.R
 ```
 
 ## Author
