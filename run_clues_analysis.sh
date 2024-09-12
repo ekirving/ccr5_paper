@@ -91,14 +91,8 @@ for rsid in "${DELETIONS[@]}"; do
 
             num_samples=$(wc -l < "clues/${rsid}/${rsid}-${model}.ancient" | sed 's/ *//')
 
-            if [ "${mode}" == "mod_freq" ]; then
-                mod_label="Modern DAF = ${freq}"
-            else
-                mod_label="No modern DAF"
-            fi
-
             # make the label
-            echo "{\"title\":\"${rsid} | ${model} | ${mod_label} | n=${num_samples}\", \"gwascat\": []}" \
+            echo "{\"title\":\"${rsid} | ${model} | n=${num_samples} samples\", \"gwascat\": []}" \
                      > "clues/${rsid}/${rsid}-${model}-${mode}-label.json"
 
             # plot the trajectory
