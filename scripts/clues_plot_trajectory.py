@@ -14,7 +14,6 @@ from math import ceil
 
 import numpy as np
 from matplotlib import pyplot as plt
-from scipy.stats.distributions import chi2
 
 parser = argparse.ArgumentParser()
 parser.add_argument("inputPrefix", type=str)
@@ -40,7 +39,7 @@ f, ax = plt.subplots(1, 1)
 f.set_size_inches(20, 10)
 
 xmin = int(min(epochs))
-xmax = min(int(max(epochs)), round(13665 / args.gen_time))
+xmax = min(int(max(epochs)), round(13665 / args.gen_time))  # TODO parameterize this
 
 xticks = range(xmin, xmax + 1, round(1000 / args.gen_time))
 
@@ -49,16 +48,39 @@ epochs = epochs * -1
 xticks = [tick * -1 for tick in xticks]
 xlabels = [-int(tick * args.gen_time / 1000) for tick in xticks]
 
-data = []
-for epoch, s in params["epochs"].items():
-    # convert the log-likelihood ratio into a p-value
-    # https://en.wikipedia.org/wiki/Wilks%27_theorem
-    params["p.value"] = chi2.sf(2 * params["logLR"], 1)
-    data.append(
-        "logLR = {:.2f} | p = {:.2e} | epoch = {} | s = {:.5f}".format(params["logLR"], params["p.value"], epoch, s)
-    )
+desc = {
+    "ancient": "Ancient samples only",
+    "modern": "Modern 1000G data only",
+    "both": "Ancient samples plus modern 1000G data",
+}
 
-subtitle = "\n" + "\n".join(data)
+subtitle = desc[params["mode"]]
+
+ancestries = {
+    "ALL": "All ancestries",
+    "ANA": "Anatolian Farmers",
+    "CHG": "Caucasus Hunter-gatherers",
+    "WHG": "Western Hunter-gatherers",
+    "EHG": "Eastern Hunter-gatherers",
+}
+
+subtitle += " | " + ancestries[args.ancestry]
+
+if params["use_freq"] == "mod_freq":
+    subtitle += f" | Modern DAF = {float(params['mod_freq']):.3f}"
+else:
+    subtitle += f" | No modern DAF"
+
+data = []
+
+logLR = params["logLR"]
+pval = params["pval"]
+pval_fmt = f"{pval:.2e}" if pval < 0.05 else f"{pval:.2f}"
+
+for epoch, s in params["epochs"].items():
+    data.append(f"logLR = {logLR:.2f} | p = {pval_fmt} | epoch = {epoch} | s = {s:.5f}")
+
+subtitle += "\n" + "\n".join(data)
 
 # ignore MatplotlibDeprecation warnings
 warnings.filterwarnings("ignore")
