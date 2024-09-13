@@ -17,23 +17,18 @@ source("scrips/clues_utils.R")
 # the average generation time in years
 gen_time <- 28
 
-# CCR5Δ32 and the paired controls
-deletions <- c(
-    "rs333", # CCR5Δ32
-    "rs61231801",
-    "rs66552573",
-    "rs67580019",
-    "rs143241023",
-    "rs150628438",
-    "rs369842709",
-    "rs556322139"
+# ancestry paths
+ancestries <- c(
+    "ALL",
+    "ANA",
+    "CHG",
+    "WHG",
+    "EHG"
 )
 
 models <- c(
-    "Strict_filter",
-    "Permissive_filter"
-    # "No_filter",
-    # "p_Data"
+    "HAPI_samples",
+    "West_Eurasian_samples"
 )
 
 modes <- c(
@@ -41,60 +36,16 @@ modes <- c(
     "no_freq"
 )
 
-# load the estimated allele ages
-ages <- read_tsv("clues/allele_ages.tsv", show_col_types = FALSE) %>%
-    filter(rsid %in% deletions & model %in% models & mode %in% modes)
-
-clues_trajectory <- function(model_path, smooth = 10) {
-
-    # load the model data
-    epochs <- npyLoad(paste0(model_path, ".epochs.npy"))
-    freqs <- npyLoad(paste0(model_path, ".freqs.npy"))
-    logpost <- npyLoad(paste0(model_path, ".post.npy"), dotranspose = F)
-
-    # add column names
-    colnames(logpost) <- paste0("V", seq(ncol(logpost)))
-
-    model <- as_tibble(logpost) %>%
-        # convert posterior densities from log-likelihoods
-        exp() %>%
-        # add the frequency labels
-        add_column(freq = freqs, .before = 2) %>%
-        # add the title heights (and a little padding to make sure there are no gaps)
-        # tile heights are not equal because there is higher sampling density near 0 and 1
-        add_column(height = diff(c(0, freqs)) + 1e-4, .before = 3) %>%
-        # pivot the columns into long format
-        pivot_longer(-c(freq, height), names_to = "epoch", values_to = "density") %>%
-        # convert the column names into epochs (and switch the direction of time)
-        mutate(epoch = -epochs[as.numeric(gsub("V", "", epoch))]) %>%
-        # sort by epoch age
-        arrange(epoch)
-
-    # extract the maximum posterior trajectory
-    traj <- model %>%
-        group_by(epoch) %>%
-        top_n(1, density) %>%
-        ungroup() %>%
-        arrange(epoch)
-
-    # apply a little smoothing to the jagged steps in the trajectory
-    if (smooth) {
-        traj$freq <- rollapply(c(traj$freq, rep_len(NA, smooth - 1)), width = smooth, by = 1, FUN = mean, na.rm = TRUE, align = "left")
-    }
-
-    traj
-}
-
 # load the trajectories
 traj <- bind_rows(
-    lapply(deletions, function(rsid) {
+    lapply(ancestries, function(ancestry) {
         bind_rows(
             lapply(models, function(model) {
                 lapply(modes, function(mode) {
-                    prefix <- paste0("clues/", rsid, "/", rsid, "-", model, "-", mode)
+                    prefix <- paste0("clues/ccr5_tags-", model, "/ccr5_tags-", model, "-", ancestry, "-", mode)
                     result <- fromJSON(paste0(prefix, ".json"))
                     clues_trajectory(prefix) %>%
-                        mutate(rsid = rsid, model = model, mode = mode, pval = result$pval)
+                        mutate(model = model, ancestry = ancestry, mode = mode, pval = result$pval)
                 })
             })
         )
@@ -109,54 +60,39 @@ xlabels <- round(xbreaks * gen_time / 1000)
 
 # set the factor order and labels
 traj$mode <- factor(traj$mode, levels = c("mod_freq", "no_freq"), labels = c("With modern DAF", "Without modern DAF"))
-ages$mode <- factor(ages$mode, levels = c("mod_freq", "no_freq"), labels = c("With modern DAF", "Without modern DAF"))
 
 traj$model <- factor(traj$model, levels = models, labels = str_replace_all(models, "_", " "))
-ages$model <- factor(ages$model, levels = models, labels = str_replace_all(models, "_", " "))
 
 # format the data for display
 traj <- traj %>%
     mutate(
-        significant = as.numeric(pval < (0.05 / length(deletions))),
+        significant = as.numeric(pval < (0.05 / length(ancestries))),
         # format the p-value
         pval = ifelse(
             pval < 0.05,
             sprintf("%.2e", signif(pval, 2)),
             sprintf("%.2f", signif(pval, 2))
         ),
-        snp_label = paste0(ifelse(rsid == "rs333", "CCR5Δ32", rsid), " (p=", pval, ")")
-    )
-
-# add the significant flag to the allele age df
-ages <- ages %>%
-    inner_join(
-        traj %>% select(rsid, model, mode, significant) %>% unique(),
-        by = join_by(rsid, model, mode)
+        snp_label = paste0(ancestry, " (p=", pval, ")")
     )
 
 snp_colors <- c(
-    "rs333" = "#33a02c",
-    "rs61231801" = "#a6cee3",
-    "rs66552573" = "#1f78b4",
-    "rs67580019" = "#fb9a99",
-    "rs143241023" = "#e31a1c",
-    "rs150628438" = "#fdbf6f",
-    "rs369842709" = "#ff7f00",
-    "rs556322139" = "#cab2d6"
+    "ALL" = "#33a02c",
+    "ANA" = "#a6cee3",
+    "CHG" = "#1f78b4",
+    "WHG" = "#fb9a99",
+    "EHG" = "#e31a1c",
 )
 
 plt <- traj %>%
     # plot the trajectories
-    ggplot(aes(x = epoch, y = freq, color = rsid, alpha = significant)) +
+    ggplot(aes(x = epoch, y = freq, color = ancestry, alpha = significant)) +
 
     # plot the maximum posterior trajectory
     geom_line(linewidth = 1, na.rm = TRUE) +
 
     # print the labels
     geom_dl(aes(label = snp_label), method = list(dl.trans(x = x + 0.1), "last.qp", cex = 0.7), na.rm = TRUE) +
-
-    # show the allele ages
-    geom_point(aes(y = 0), ages) +
 
     # display as a grid
     facet_grid(model ~ mode, labeller = labeller(description = label_wrap_gen())) +
@@ -171,8 +107,7 @@ plt <- traj %>%
     scale_y_continuous(limits = c(0, .20), breaks = seq(0, 1, 0.05), position = "left") +
     scale_x_continuous(limits = c(xmin, xmax), breaks = xbreaks, labels = xlabels, expand = expansion(add = c(0, 470))) +
     labs(
-        title = "Allele frequency trajectories for CCR5Δ32 and paired controls",
-        # subtitle = " ",
+        title = "Allele frequency trajectories for CCR5Δ32 and paired controls"
     ) +
     ylab("DAF") +
     xlab("kyr BP") +
@@ -188,4 +123,4 @@ plt <- traj %>%
         panel.spacing = unit(0.5, "lines")
     )
 
-ggsave("figure/deletion_trajectories.png", plt, width = 9, height = 6)
+ggsave("figure/ancestry_trajectories.png", plt, width = 9, height = 6)

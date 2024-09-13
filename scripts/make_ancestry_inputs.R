@@ -11,7 +11,6 @@ quiet <- function(x) {
 quiet(library(tidyverse))
 
 for (model in c("HAPI_samples", "West_Eurasian_samples")) {
-
     tags <- read_tsv(
         paste0("data/ccr5_tags-", model, ".tsv"),
         col_names = c("rsid", "chr", "pos", "ref", "alt", "sample", "geno", "ancestry"),
@@ -68,7 +67,7 @@ for (model in c("HAPI_samples", "West_Eurasian_samples")) {
     # make the pan-ancestry input file
     data %>%
         group_by(sample, gens) %>%
-        summarise(call=sum(call), .groups = "drop") %>%
+        summarise(call = sum(call), .groups = "drop") %>%
         mutate(call = case_when(
             call == 0 ~ "0.000000 -inf -inf",
             call == 1 ~ "-inf 0.000000 -inf",
@@ -77,11 +76,10 @@ for (model in c("HAPI_samples", "West_Eurasian_samples")) {
         mutate(clues = sprintf("%.6f %s", gens, call)) %>%
         arrange(gens) %>%
         select(clues) %>%
-        write_delim(paste0("clues/ccr5_tags-", model,"/ccr5_tags-", model,"-ALL.ancient"), col_names = F, escape = "none", delim = "")
+        write_delim(paste0("clues/ccr5_tags-", model, "/ccr5_tags-", model, "-ALL.ancient"), col_names = F, escape = "none", delim = "")
 
     # now do each of the ancestry paths
     for (anc in unique(data$ancestry)) {
-
         path <- data %>% filter(ancestry == anc)
 
         # convert the hard-called models into pseudo-likelihoods
@@ -93,6 +91,6 @@ for (model in c("HAPI_samples", "West_Eurasian_samples")) {
             mutate(clues = sprintf("%.6f %s", gens, call)) %>%
             arrange(gens) %>%
             select(clues) %>%
-            write_delim(paste0("clues/ccr5_tags-", model,"/ccr5_tags-", model,"-", anc, ".ancient"), col_names = F, escape = "none", delim = "")
+            write_delim(paste0("clues/ccr5_tags-", model, "/ccr5_tags-", model, "-", anc, ".ancient"), col_names = F, escape = "none", delim = "")
     }
 }
