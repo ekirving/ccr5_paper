@@ -12,7 +12,7 @@ quiet(library(tidyverse))
 quiet(library(directlabels))
 quiet(library(jsonlite))
 
-source("scrips/clues_utils.R")
+source("scripts/clues_utils.R")
 
 # the average generation time in years
 gen_time <- 28

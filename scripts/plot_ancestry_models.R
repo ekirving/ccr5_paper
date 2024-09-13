@@ -12,7 +12,7 @@ quiet(library(tidyverse))
 quiet(library(directlabels))
 quiet(library(jsonlite))
 
-source("scrips/clues_utils.R")
+source("scripts/clues_utils.R")
 
 # the average generation time in years
 gen_time <- 28
@@ -27,8 +27,8 @@ ancestries <- c(
 )
 
 models <- c(
-    "HAPI_samples",
-    "West_Eurasian_samples"
+    "HAPI_samples"
+    # "West_Eurasian_samples"
 )
 
 modes <- c(
@@ -76,17 +76,17 @@ traj <- traj %>%
         snp_label = paste0(ancestry, " (p=", pval, ")")
     )
 
-snp_colors <- c(
-    "ALL" = "#33a02c",
-    "ANA" = "#a6cee3",
-    "CHG" = "#1f78b4",
-    "WHG" = "#fb9a99",
-    "EHG" = "#e31a1c",
+ancestry_colors <- c(
+    "ALL" = "#66c2a5",
+    "WHG" = "#fc8d62",
+    "EHG" = "#8da0cb",
+    "CHG" = "#e78ac3",
+    "ANA" = "#a6d854"
 )
 
 plt <- traj %>%
     # plot the trajectories
-    ggplot(aes(x = epoch, y = freq, color = ancestry, alpha = significant)) +
+    ggplot(aes(x = epoch, y = freq, color = ancestry)) +
 
     # plot the maximum posterior trajectory
     geom_line(linewidth = 1, na.rm = TRUE) +
@@ -98,16 +98,16 @@ plt <- traj %>%
     facet_grid(model ~ mode, labeller = labeller(description = label_wrap_gen())) +
 
     # set the model colours
-    scale_color_manual(values = snp_colors) +
+    scale_color_manual(values = ancestry_colors) +
 
     # plot non-significant trajectories as transparent
     scale_alpha(range = c(0.3, 1)) +
 
     # set the axis breaks
-    scale_y_continuous(limits = c(0, .20), breaks = seq(0, 1, 0.05), position = "left") +
-    scale_x_continuous(limits = c(xmin, xmax), breaks = xbreaks, labels = xlabels, expand = expansion(add = c(0, 470))) +
+    scale_y_continuous(limits = c(0, .32), breaks = seq(0, 1, 0.05), position = "left") +
+    scale_x_continuous(limits = c(xmin, xmax), breaks = xbreaks, labels = xlabels, expand = expansion(add = c(0, 270))) +
     labs(
-        title = "Allele frequency trajectories for CCR5Δ32 and paired controls"
+        title = "Ancestry stratified trajectories for CCR5Δ32"
     ) +
     ylab("DAF") +
     xlab("kyr BP") +
@@ -123,4 +123,4 @@ plt <- traj %>%
         panel.spacing = unit(0.5, "lines")
     )
 
-ggsave("figure/ancestry_trajectories.png", plt, width = 9, height = 6)
+ggsave("figure/ancestry_trajectories.png", plt, width = 9, height = 3)
