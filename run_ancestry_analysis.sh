@@ -85,7 +85,7 @@ for ancestry in "${ANCESTRIES[@]}"; do
             # extract the results
             python scripts/clues_parse_log.py \
               --rsid "${ancestry}-${model}-${mode}" \
-              --ancestry ALL \
+              --ancestry "${ancestry}" \
               --use-freq "${mode}" \
               --mod-freq "${freq}" \
               --log "clues/ccr5_tags-${model}/ccr5_tags-${model}-${ancestry}-${mode}.log" \
@@ -94,7 +94,7 @@ for ancestry in "${ANCESTRIES[@]}"; do
             num_samples=$(wc -l < "clues/ccr5_tags-${model}/ccr5_tags-${model}-${ancestry}.ancient" | sed 's/ *//')
 
             # make the label
-            echo "{\"title\":\"${ancestry} | ${model} | n=${num_samples} samples\", \"gwascat\": []}" \
+            echo "{\"title\":\"CCR5Δ32 tag SNPs | ${model} | n=${num_samples} samples\", \"gwascat\": []}" \
                      > "clues/ccr5_tags-${model}/ccr5_tags-${model}-${ancestry}-${mode}-label.json"
 
             # plot the trajectory

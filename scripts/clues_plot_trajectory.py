@@ -48,14 +48,6 @@ epochs = epochs * -1
 xticks = [tick * -1 for tick in xticks]
 xlabels = [-int(tick * args.gen_time / 1000) for tick in xticks]
 
-desc = {
-    "ancient": "Ancient samples only",
-    "modern": "Modern 1000G data only",
-    "both": "Ancient samples plus modern 1000G data",
-}
-
-subtitle = desc[params["mode"]]
-
 ancestries = {
     "ALL": "All ancestries",
     "ANA": "Anatolian Farmers",
@@ -64,7 +56,7 @@ ancestries = {
     "EHG": "Eastern Hunter-gatherers",
 }
 
-subtitle += " | " + ancestries[args.ancestry]
+subtitle = ancestries[args.ancestry]
 
 if params["use_freq"] == "mod_freq":
     subtitle += f" | Modern DAF = {float(params['mod_freq']):.3f}"
