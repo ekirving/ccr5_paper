@@ -2,7 +2,7 @@
 This repository contains code for the `CLUES` selection analysis from 
 [Tracing the evolutionary path of the CCR5delta32 deletion via ancient and modern genomes](https://doi.org/10.1101/2023.06.15.23290026).
 
-![Figure 5](./figure/deletion_trajectories.png?raw=true)
+![HAPI trajectories](/figure/hapi_trajectories.png?raw=true)
 
 If you reuse any of this code then please cite the preprint:
 > Ravn, K., Cobuccio, L., Muktupavela, R.A., Meisner, J.M., Benros, M.E., Korneliussen, T.S., Sikora, M., Willerslev, 
