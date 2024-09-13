@@ -27,9 +27,9 @@ Then activate the environment:
 conda activate ccr5
 ```
 
-## Running the code
+## Running the HAPI analyses
 
-This project contains rules for running selection tests using `CLUES` from the outputs of the different `HAPI` models.
+These commands run the `CLUES` selection tests using the deletion calls from the `HAPI` models.
 
 ```bash
 # run all the CCR5 and control models

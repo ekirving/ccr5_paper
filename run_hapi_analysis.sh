@@ -70,7 +70,7 @@ for rsid in "${DELETIONS[@]}"; do
                  ${daf} \
                  --coal "relate/1000G_phase3-FIN_GBR_TSI-popsize.coal" \
                  --ancientSamps "clues/${rsid}/${rsid}-${model}.ancient" \
-                 --timeBins "clues/one-epoch.bins" \
+                 --timeBins "data/one-epoch.bins" \
                  --betaParam 0.5 \
                  --out "clues/${rsid}/${rsid}-${model}-${mode}" \
                      &> "clues/${rsid}/${rsid}-${model}-${mode}.log"

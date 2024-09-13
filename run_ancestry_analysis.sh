@@ -61,7 +61,7 @@ for ancestry in "${ANCESTRIES[@]}"; do
                         ${daf} \
                         --coal "relate/1000G_phase3-FIN_GBR_TSI-popsize.coal" \
                         --ancientSamps "clues/ccr5_tags-${model}/ccr5_tags-${model}-${ancestry}.ancient" \
-                        --timeBins "clues/one-epoch.bins" \
+                        --timeBins "data/one-epoch.bins" \
                         --betaParam 0.5 \
                         --out "clues/ccr5_tags-${model}/ccr5_tags-${model}-${ancestry}-${mode}" \
                         &> "clues/ccr5_tags-${model}/ccr5_tags-${model}-${ancestry}-${mode}.log"
@@ -75,7 +75,7 @@ for ancestry in "${ANCESTRIES[@]}"; do
                         ${daf} \
                         --coal "relate/1000G_phase3-FIN_GBR_TSI-popsize.coal" \
                         --ancientHaps "clues/ccr5_tags-${model}/ccr5_tags-${model}-${ancestry}.ancient" \
-                        --timeBins "clues/one-epoch.bins" \
+                        --timeBins "data/one-epoch.bins" \
                         --betaParam 0.5 \
                         --out "clues/ccr5_tags-${model}/ccr5_tags-${model}-${ancestry}-${mode}" \
                         &> "clues/ccr5_tags-${model}/ccr5_tags-${model}-${ancestry}-${mode}.log"

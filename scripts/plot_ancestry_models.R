@@ -188,4 +188,4 @@ plt <- traj %>%
         panel.spacing = unit(0.5, "lines")
     )
 
-ggsave("figure/hapi_trajectories.png", plt, width = 9, height = 6)
+ggsave("figure/deletion_trajectories.png", plt, width = 9, height = 6)
