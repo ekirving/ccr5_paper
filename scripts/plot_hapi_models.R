@@ -30,8 +30,8 @@ deletions <- c(
 )
 
 models <- c(
-    "Strict_filter",
-    "Permissive_filter"
+    "Permissive_filter",
+    "Strict_filter"
     # "No_filter",
     # "p_Data"
 )
@@ -131,7 +131,7 @@ plt <- traj %>%
     scale_y_continuous(limits = c(0, .20), breaks = seq(0, 1, 0.05), position = "left") +
     scale_x_continuous(limits = c(xmin, xmax), breaks = xbreaks, labels = xlabels, expand = expansion(add = c(0, 470))) +
     labs(
-        title = "Ancestry stratified trajectories for the CCR5Δ32 deletion"
+        title = "Allele frequency trajectories for CCR5Δ32 and the paired controls"
     ) +
     ylab("DAF") +
     xlab("kyr BP") +
