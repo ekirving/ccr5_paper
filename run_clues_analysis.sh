@@ -25,12 +25,9 @@ parallel "mkdir -p clues/{}/" ::: "${DELETIONS[@]}"
 # make the CLUES inputs
 Rscript scripts/make_clues_inputs.R
 
-# make the single epoch time bins
-printf "0\n529\n" > clues/one-epoch.bins
-
 for rsid in "${DELETIONS[@]}"; do
 
-    # frequency of the deletion in FIN, GBR and TSI
+    # frequency of the each deletion 1kGP EUR
     if [ "${rsid}" == "rs333" ]; then
         freq=0.1103
     elif [ "${rsid}" == "rs61231801" ]; then
@@ -49,8 +46,6 @@ for rsid in "${DELETIONS[@]}"; do
         freq=0.1004
     elif [ "${rsid}" == "Le_proxy_SNP" ]; then
         freq=0.1362  # rs73833033
-    else
-        freq=-1
     fi
 
     for model in "${MODELS[@]}"; do
