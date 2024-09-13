@@ -9,10 +9,10 @@ quiet <- function(x) {
     suppressMessages(suppressWarnings(x))
 }
 quiet(library(tidyverse))
-quiet(library(RcppCNPy))
 quiet(library(directlabels))
-quiet(library(zoo))
 quiet(library(jsonlite))
+
+source("scrips/clues_utils.R")
 
 # the average generation time in years
 gen_time <- 28
