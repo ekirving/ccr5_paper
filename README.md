@@ -33,7 +33,7 @@ This project contains rules for running selection tests using `CLUES` from the o
 
 ```bash
 # run all the CCR5 and control models
-./run_clues_analysis.sh
+./run_hapi_analysis.sh
 ```
 
 ```bash
@@ -43,7 +43,7 @@ Rscript scripts/infer_allele_ages.R
 
 ```bash
 # plot the composite figure
-Rscript scripts/plot_models.R
+Rscript scripts/plot_hapi_models.R
 ```
 
 ## Author

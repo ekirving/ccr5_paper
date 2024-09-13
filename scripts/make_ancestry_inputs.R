@@ -13,7 +13,7 @@ quiet(library(tidyverse))
 for (model in c("HAPI_samples", "West_Eurasian_samples")) {
 
     tags <- read_tsv(
-        paste0("data/ccr5_tags_", model, ".tsv"),
+        paste0("data/ccr5_tags-", model, ".tsv"),
         col_names = c("rsid", "chr", "pos", "ref", "alt", "sample", "geno", "ancestry"),
         show_col_types = FALSE
     )
@@ -77,7 +77,7 @@ for (model in c("HAPI_samples", "West_Eurasian_samples")) {
         mutate(clues = sprintf("%.6f %s", gens, call)) %>%
         arrange(gens) %>%
         select(clues) %>%
-        write_delim(paste0("clues/ccr5_tags_", model,"/ccr5_tags_", model,"_ALL.ancient"), col_names = F, escape = "none", delim = "")
+        write_delim(paste0("clues/ccr5_tags-", model,"/ccr5_tags-", model,"-ALL.ancient"), col_names = F, escape = "none", delim = "")
 
     # now do each of the ancestry paths
     for (anc in unique(data$ancestry)) {
@@ -93,6 +93,6 @@ for (model in c("HAPI_samples", "West_Eurasian_samples")) {
             mutate(clues = sprintf("%.6f %s", gens, call)) %>%
             arrange(gens) %>%
             select(clues) %>%
-            write_delim(paste0("clues/ccr5_tags_", model,"/ccr5_tags_", model,"_", anc, ".ancient"), col_names = F, escape = "none", delim = "")
+            write_delim(paste0("clues/ccr5_tags-", model,"/ccr5_tags-", model,"-", anc, ".ancient"), col_names = F, escape = "none", delim = "")
     }
 }
