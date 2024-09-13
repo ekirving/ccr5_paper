@@ -53,33 +53,27 @@ for ancestry in "${ANCESTRIES[@]}"; do
             fi
 
             if [ "${ancestry}" == "ALL" ]; then
-                (
-                    set -x
-                    # run CLUES in diploid mode
-                    python bin/clues/inference.py \
-                        --lik \
-                        ${daf} \
-                        --coal "relate/1000G_phase3-FIN_GBR_TSI-popsize.coal" \
-                        --ancientSamps "clues/ccr5_tags-${model}/ccr5_tags-${model}-${ancestry}.ancient" \
-                        --timeBins "data/one-epoch.bins" \
-                        --betaParam 0.5 \
-                        --out "clues/ccr5_tags-${model}/ccr5_tags-${model}-${ancestry}-${mode}" \
-                        &> "clues/ccr5_tags-${model}/ccr5_tags-${model}-${ancestry}-${mode}.log"
-                )
+                # run CLUES in diploid mode
+                python bin/clues/inference.py \
+                    --lik \
+                    ${daf} \
+                    --coal "relate/1000G_phase3-FIN_GBR_TSI-popsize.coal" \
+                    --ancientSamps "clues/ccr5_tags-${model}/ccr5_tags-${model}-${ancestry}.ancient" \
+                    --timeBins "data/one-epoch.bins" \
+                    --betaParam 0.5 \
+                    --out "clues/ccr5_tags-${model}/ccr5_tags-${model}-${ancestry}-${mode}" \
+                    &> "clues/ccr5_tags-${model}/ccr5_tags-${model}-${ancestry}-${mode}.log"
             else
-                (
-                    set -x
-                    # run CLUES in haploid mode
-                    python bin/clues/inference.py \
-                        --lik \
-                        ${daf} \
-                        --coal "relate/1000G_phase3-FIN_GBR_TSI-popsize.coal" \
-                        --ancientHaps "clues/ccr5_tags-${model}/ccr5_tags-${model}-${ancestry}.ancient" \
-                        --timeBins "data/one-epoch.bins" \
-                        --betaParam 0.5 \
-                        --out "clues/ccr5_tags-${model}/ccr5_tags-${model}-${ancestry}-${mode}" \
-                        &> "clues/ccr5_tags-${model}/ccr5_tags-${model}-${ancestry}-${mode}.log"
-                )
+                # run CLUES in haploid mode
+                python bin/clues/inference.py \
+                    --lik \
+                    ${daf} \
+                    --coal "relate/1000G_phase3-FIN_GBR_TSI-popsize.coal" \
+                    --ancientHaps "clues/ccr5_tags-${model}/ccr5_tags-${model}-${ancestry}.ancient" \
+                    --timeBins "data/one-epoch.bins" \
+                    --betaParam 0.5 \
+                    --out "clues/ccr5_tags-${model}/ccr5_tags-${model}-${ancestry}-${mode}" \
+                    &> "clues/ccr5_tags-${model}/ccr5_tags-${model}-${ancestry}-${mode}.log"
             fi
 
             # extract the results
