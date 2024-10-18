@@ -13,6 +13,7 @@ dependencies:
   - conda-forge::r-base=4.1.1
   - conda-forge::r-directlabels=2021.1.13
   - conda-forge::r-fs=1.6.2
+  - conda-forge::r-hmisc=5.1_0
   - conda-forge::r-rcppcnpy=0.2.11
   - conda-forge::r-styler=1.7.0
   - conda-forge::r-tidyverse=1.3.2

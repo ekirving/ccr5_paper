@@ -4,6 +4,7 @@ This repository contains code for the `CLUES` selection analysis from
 
 ![HAPI trajectories](/figure/hapi_trajectories.png?raw=true)
 ![Ancestral path trajectories](/figure/ancestry_trajectories.png?raw=true)
+![Binned frequencies](/figure/binned_frequencies.png?raw=true)
 
 If you reuse any of this code then please cite the preprint:
 > Ravn, K., Cobuccio, L., Muktupavela, R.A., Meisner, J.M., Benros, M.E., Korneliussen, T.S., Sikora, M., Willerslev, 
