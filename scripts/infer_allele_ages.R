@@ -10,6 +10,7 @@ quiet <- function(x) {
 }
 quiet(library(tidyverse))
 quiet(library(RcppCNPy))
+quiet(library(jsonlite))
 
 # the lowest discretisations of frequency are:
 # 6.168503e-11
@@ -55,8 +56,10 @@ traj <- bind_rows(
         bind_rows(
             lapply(models, function(model) {
                 lapply(modes, function(mode) {
-                    clues_trajectory(paste0("clues/", rsid, "/", rsid, "-", model, "-", mode)) %>%
-                        mutate(rsid = rsid, model = model, mode = mode)
+                    prefix <- paste0("clues/", rsid, "/", rsid, "-", model, "-", mode)
+                    result <- fromJSON(paste0(prefix, ".json"))
+                    clues_trajectory(prefix) %>%
+                        mutate(rsid = rsid, model = model, mode = mode, logLR = result$logLR, pval = result$pval, s = result$epochs[[1]])
                 })
             })
         )
@@ -65,11 +68,11 @@ traj <- bind_rows(
 
 age <- traj %>%
     filter(freq <= MIN_FREQ) %>%
-    group_by(rsid, model, mode, epoch) %>%
+    group_by(rsid, model, mode, logLR, pval, s, epoch) %>%
     summarise(density = sum(density), freq = max(freq), .groups = "drop_last") %>%
     filter(density >= 0.5) %>%
     slice(which.max(epoch)) %>%
     mutate(age_bp = -epoch * 28) %>%
-    select(rsid, model, mode, freq, epoch, age_bp, density)
+    select(rsid, model, mode, logLR, pval, s, freq, epoch, age_bp, density)
 
 write_tsv(age, "clues/allele_ages.tsv")
