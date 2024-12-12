@@ -47,7 +47,7 @@ clues_trajectory <- function(model_path) {
 }
 
 deletions <- c("rs333", "rs61231801", "rs66552573", "rs67580019", "rs143241023", "rs150628438", "rs369842709", "rs556322139")
-models <- c("No_filter", "Permissive_filter", "Strict_filter", "p_Data")
+models <- c("Permissive_filter", "Strict_filter")
 modes <- c("mod_freq", "no_freq")
 
 # load the trajectories
@@ -66,13 +66,21 @@ traj <- bind_rows(
     })
 )
 
+# get the unique model results
+results <- traj %>%
+    select(rsid, model, mode, logLR, pval, s) %>%
+    unique()
+
 age <- traj %>%
     filter(freq <= MIN_FREQ) %>%
-    group_by(rsid, model, mode, logLR, pval, s, epoch) %>%
-    summarise(density = sum(density), freq = max(freq), .groups = "drop_last") %>%
+    group_by(rsid, model, mode, epoch) %>%
+    summarise(density = sum(density), .groups = "drop_last") %>%
     filter(density >= 0.5) %>%
     slice(which.max(epoch)) %>%
     mutate(age_bp = -epoch * 28) %>%
-    select(rsid, model, mode, logLR, pval, s, freq, epoch, age_bp, density)
+    select(rsid, model, mode, epoch, age_bp)
 
-write_tsv(age, "clues/allele_ages.tsv")
+results %>%
+    left_join(age, by = join_by(rsid, model, mode)) %>%
+    write_tsv("clues/allele_ages.tsv")
+
